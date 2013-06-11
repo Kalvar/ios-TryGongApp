@@ -1,7 +1,7 @@
 ## Screen Shot
 
 <img src="https://dl.dropbox.com/u/83663874/GitHubs/TryGong-1.png" alt="TryGong" title="TryGong" style="margin: 20px;" class="center" />
-&nbps;
+。
 <img src="https://dl.dropbox.com/u/83663874/GitHubs/TryGong-2.png" alt="TryGong" title="TryGong" style="margin: 20px;" class="center" />
 
 ## Supports
