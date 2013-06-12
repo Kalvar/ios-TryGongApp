@@ -6,7 +6,7 @@
 
 ## Details
 
-TryGong is an App like basic InstaWeather to take a picture and choose a template to share to facebook, you can find it from <a href='https://itunes.apple.com/us/app/trygong/id657226352?mt=8'>App Store</a>.
+TryGong is an App like basic InstaWeather to take a picture and choose a template to combine to share to facebook, you can find it from <a href='https://itunes.apple.com/us/app/trygong/id657226352?mt=8'>App Store</a>.
 
 ## Who Also Use This
 
