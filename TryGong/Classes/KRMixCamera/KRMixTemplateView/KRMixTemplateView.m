@@ -2,7 +2,7 @@
 //  KRMixTemplateView.m
 //  
 //
-//  Created by Kuo-Ming Lin ( Kalvar ; ilovekalvar@gmail.com ) on 13/5/7.
+//  Created by Kalvar on 13/5/7.
 //  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
 //
 
@@ -24,6 +24,7 @@
 -(void)_makeTitleLabel
 {
     [self.titleLabel setHidden:NO];
+    [self.titleLabel setBackgroundColor:[UIColor clearColor]];
     switch ( self.krMixTemplateTitleLabelMode )
     {
         case KRMixTemplateTitleLabelMode1:
@@ -56,10 +57,11 @@
             break;
         case KRMixTemplateTitleLabelMode10:
             //模式 10
-            [self.titleLabel setFrame:CGRectMake(5.0f, 262.0f, 309.0f, 53.0f)];
+            [self.titleLabel setFrame:CGRectMake(0.0f, 270.0f, 320.0f, 58.0f)];
             [self.titleLabel setFont:[UIFont systemFontOfSize:32.0f]];
             [self.titleLabel setTextAlignment:NSTextAlignmentCenter];
             [self.titleLabel setTextColor:[UIColor whiteColor]];
+            [self.titleLabel setBackgroundColor:[UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.2f]];
             break;
         default:
             //Nothing
@@ -118,6 +120,7 @@
     {
         //設定邊界大小和影像透明度與縮放倍數
         UIGraphicsBeginImageContextWithOptions(theView.bounds.size, NO, 2.0f);
+        //UIGraphicsBeginImageContextWithOptions(theView.bounds.size, theView.opaque, 2.0f);
     }
     else
     {
@@ -134,7 +137,6 @@
 -(void)display
 {
     [self _makeTitleLabel];
-    
 }
 
 

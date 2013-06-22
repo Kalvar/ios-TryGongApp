@@ -2,7 +2,7 @@
 //  KRMixCameraViewController.h
 //  
 //
-//  Created by Kuo-Ming Lin ( Kalvar ; ilovekalvar@gmail.com ) on 13/5/5.
+//  Created by Kalvar on 13/5/5.
 //  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 
 @protocol KRMixCameraDelegate;
 
-@interface KRMixCameraViewController : UIViewController<UIScrollViewDelegate>
+@interface KRMixCameraViewController : UIViewController<UIScrollViewDelegate, UITextFieldDelegate>
 {
     __weak id<KRMixCameraDelegate> delegate;
     NSString *subtitle;
@@ -30,6 +30,7 @@
 @property (nonatomic, weak) IBOutlet UIButton *outFBLoginButton;
 @property (nonatomic, weak) IBOutlet UIButton *outSwitchCameraButton;
 @property (nonatomic, weak) IBOutlet UIButton *outSwitchFlashButton;
+@property (nonatomic, weak) IBOutlet UITextField *outWordsTextField;
 
 
 -(id)initWithDelegate:(id<KRMixCameraDelegate>)_krMixCameraDelegate;

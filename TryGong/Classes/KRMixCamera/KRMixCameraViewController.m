@@ -2,7 +2,7 @@
 //  KRMixCameraViewController.m
 //  
 //
-//  Created by Kuo-Ming Lin ( Kalvar ; ilovekalvar@gmail.com ) on 13/5/5.
+//  Created by Kalvar on 13/5/5.
 //  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
 //
 
@@ -111,10 +111,12 @@ typedef enum _KRMixCameraImageCutModes
                   @"ele_fame_3.png",
                   @"ele_fame_4.png",
                   @"ele_fame_5.png",
+                  @"ele_fame_blank.png",
                   nil];
-    self._cameraImage       = nil;
-    self._doShareToFacebook = NO;
-    //self.subtitle     = @"";
+    self._cameraImage           = nil;
+    self._doShareToFacebook     = NO;
+    self.subtitle               = @"核電歸零";
+    self.outWordsTextField.text = self.subtitle;
     
 }
 
@@ -275,9 +277,9 @@ typedef enum _KRMixCameraImageCutModes
          */
         switch (_index)
         {
-            //case 0:
-                //_krMixTemplateView.krMixTemplateTitleLabelMode = KRMixTemplateTitleLabelMode1;
-                //break;
+            case 5:
+                _krMixTemplateView.krMixTemplateTitleLabelMode = KRMixTemplateTitleLabelMode10;
+                break;
             default:
                 _krMixTemplateView.krMixTemplateTitleLabelMode = KRMixTemplateTitleLabelModeNothing;
                 break;
@@ -370,7 +372,7 @@ typedef enum _KRMixCameraImageCutModes
     self.outPhotoImageView.image = [self _mergeBaseImage:self._cameraImage
                                               underImage:[_subview captureImageFromView]
                                       matchBaseImageSize:YES];
-    [self._krFacebook uploadWithImage:self.outPhotoImageView.image andDescription:@"Please Stop Nuclear."];
+    [self._krFacebook uploadWithImage:self.outPhotoImageView.image andDescription:self.outWordsTextField.text];
     [self _dismissShareView];
     [self _showAlertWithMessage:@"Cool, You Shared!"];
     if( self.delegate )
@@ -486,6 +488,7 @@ typedef enum _KRMixCameraImageCutModes
 @synthesize outFBLoginButton;
 @synthesize outSwitchCameraButton;
 @synthesize outSwitchFlashButton;
+@synthesize outWordsTextField;
 //
 @synthesize _krCamera;
 @synthesize _krFacebook;
@@ -928,6 +931,61 @@ typedef enum _KRMixCameraImageCutModes
 {
     
 }
+
+-(void)krFacebook:(KRFacebook *)_krFacebook didLoadWithResponsesOfDictionary:(NSDictionary *)_results andKindOf:(NSString *)_perform
+{
+    
+}
+
+#pragma UITextFieldDelegate
+-(void)_reloadTemplatesWords
+{
+    for( KRMixTemplateView *_krMixTemplateView in self.outScrollView.subviews )
+    {
+        if( _krMixTemplateView.krMixTemplateTitleLabelMode != KRMixTemplateTitleLabelModeNothing )
+        {
+            _krMixTemplateView.titleLabel.text = self.outWordsTextField.text;
+            [_krMixTemplateView display];
+        }
+    }
+}
+
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    textField.returnKeyType      = UIReturnKeyDone;
+    textField.keyboardAppearance = UIKeyboardAppearanceAlert;
+    return YES;
+}
+
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    self.subtitle = textField.text;
+    [self _reloadTemplatesWords];
+	return YES;
+}
+
+-(BOOL)textFieldShouldEndEditing:(UITextField *)textField
+{
+    return YES;
+}
+
+#pragma UIViewDelegate
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    //這樣在平常點擊時，只要 TextField 沒有作用過，就不會重複觸發 resignFirstResponder 的函式，以節省不必要的效能浪費
+    if( self.outWordsTextField.resignFirstResponder )
+    {
+        [self.outWordsTextField resignFirstResponder];
+        if( self.outWordsTextField.text && [self.outWordsTextField.text length] > 0 )
+        {
+            [self _reloadTemplatesWords];
+        }
+    }
+    [super touchesBegan:touches withEvent:event];
+}
+
+
 
 @end
 

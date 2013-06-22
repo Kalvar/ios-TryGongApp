@@ -19,6 +19,8 @@
 #define FACEBOOK_USER_ACCOUNT_KEY    @"FBUserAccount"
 #define FACEBOOK_USER_ID_KEY         @"FBUserId"
 #define FACEBOOK_USER_NAME_KEY       @"FBUserName"
+
+#error You need to setup the facebook app developer key first.
 #define FACEBOOK_DEVELOPER_KEY       @"Your Facebook App Developer Key"
 
 /*
