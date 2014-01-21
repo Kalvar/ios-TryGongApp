@@ -40,18 +40,45 @@ typedef enum _KRMixCameraImageCutModes
 -(void)updateDotsWithNormalImage:(UIImage *)_normalImage
                andHighlightImage:(UIImage *)_highlightImage
 {
-    if( _normalImage || _highlightImage ){
-        //取得所有分頁點 ImageView
-        NSArray *dotSubviews = self.subviews;
-        for (NSInteger i = 0; i < [dotSubviews count]; i++)
+    //相容 iOS 6 / 7
+    if( _normalImage || _highlightImage )
+    {
+        for (int i = 0; i < [self.subviews count]; i++)
         {
-            //覆寫分頁點樣式圖片
-            UIImageView *dot = [dotSubviews objectAtIndex:i];
-            //是當前頁面 ? 使用正常圖片 : 使用高亮圖片
-            dot.image = self.currentPage == i ? _normalImage : _highlightImage;
+            UIView* dotView = [self.subviews objectAtIndex:i];
+            UIImageView* dot = nil;
+            
+            for (UIView* subview in dotView.subviews)
+            {
+                if ([subview isKindOfClass:[UIImageView class]])
+                {
+                    dot = (UIImageView*)subview;
+                    break;
+                }
+            }
+            
+            if (dot == nil)
+            {
+                dot = [[UIImageView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, dotView.frame.size.width, dotView.frame.size.height)];
+                [dotView addSubview:dot];
+            }
+            
+            if (i == self.currentPage)
+            {
+                if(_normalImage)
+                {
+                    dot.image = _normalImage;
+                }
+            }
+            else
+            {
+                if (_highlightImage)
+                {
+                    dot.image = _highlightImage;
+                }
+            }
         }
     }
-    
 }
 
 @end
