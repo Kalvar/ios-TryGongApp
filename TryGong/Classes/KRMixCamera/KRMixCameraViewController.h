@@ -3,10 +3,27 @@
 //  
 //
 //  Created by Kalvar on 13/5/5.
-//  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013 - 2014 年 Kuo-Ming Lin. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
+
+//裁圖模式
+typedef enum KRMixCameraImageCutModes
+{
+    //不裁
+    KRMixCameraImageCutModesForNone = 0,
+    //從中間裁
+    KRMixCameraImageCutModesForCenter,
+    //左上
+	KRMixCameraImageCutModesForLeftTop,
+    //左下
+    KRMixCameraImageCutModesForLeftBottom,
+    //右上
+    KRMixCameraImageCutModesForRightTop,
+    //右下
+    KRMixCameraImageCutModesForRightBottom
+} KRMixCameraImageCutModes;
 
 @protocol KRMixCameraDelegate;
 

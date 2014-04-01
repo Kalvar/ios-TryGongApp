@@ -11,7 +11,8 @@
 
 @protocol KRToolbarDelegate;
 
-@interface KRToolbar : NSObject{
+@interface KRToolbar : NSObject
+{
     id<KRToolbarDelegate> __weak delegate;
     UIToolbar *toolbar;
     UIView *view;

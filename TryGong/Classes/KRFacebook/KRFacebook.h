@@ -11,6 +11,8 @@
  */
 
 #import <Foundation/Foundation.h>
+//#import "FBConnect.h"
+//#import "FBLoginButton.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import "FBSBJSON.h"
 
@@ -19,9 +21,7 @@
 #define FACEBOOK_USER_ACCOUNT_KEY    @"FBUserAccount"
 #define FACEBOOK_USER_ID_KEY         @"FBUserId"
 #define FACEBOOK_USER_NAME_KEY       @"FBUserName"
-
-#error You need to setup the facebook app developer key first.
-#define FACEBOOK_DEVELOPER_KEY       @"Your Facebook App Developer Key"
+#define FACEBOOK_DEVELOPER_KEY       @"281589681972451"
 
 /*
  * 當前的執行動作集合

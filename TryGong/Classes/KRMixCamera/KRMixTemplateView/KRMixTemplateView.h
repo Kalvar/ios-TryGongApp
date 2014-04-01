@@ -36,12 +36,15 @@ typedef enum _KRMixTemplateTitleLabelModes
     __weak UILabel *titleLabel;
     //文字區塊的呈現模式
     KRMixTemplateTitleLabelModes krMixTemplateTitleLabelMode;
+    //當前顯示的圖片
+    UIImage *displayImage;
 }
 
 @property (nonatomic, strong) NSString *imageId;
 @property (nonatomic, weak) IBOutlet UIImageView *imageView;
 @property (nonatomic, weak) IBOutlet UILabel *titleLabel;
 @property (nonatomic, assign) KRMixTemplateTitleLabelModes krMixTemplateTitleLabelMode;
+@property (nonatomic, strong) UIImage *displayImage;
 
 -(UIImage *)captureImageFromView;
 -(void)display;

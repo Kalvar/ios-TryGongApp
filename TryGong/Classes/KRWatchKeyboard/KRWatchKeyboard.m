@@ -28,7 +28,8 @@
 }
 
 //實際 Run 的 Function
--(void)_keyboardWillShow:(NSNotification *)notification{
+-(void)_keyboardWillShow:(NSNotification *)notification
+{
     UIView *foundKeyboard    = nil;
     UIWindow *keyboardWindow = nil;
     for (UIWindow *testWindow in [[UIApplication sharedApplication] windows]){
@@ -83,7 +84,8 @@
     }
 }
 
--(void)_removeNotification{
+-(void)_removeNotification
+{
     /* 栘除監聽事件 No longer listen for keyboard */
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
 	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];

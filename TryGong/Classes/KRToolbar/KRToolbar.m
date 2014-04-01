@@ -35,7 +35,8 @@
 
 @implementation KRToolbar (fixPrivate)
 
--(void)_initWithVars{
+-(void)_initWithVars
+{
     self._slideUpToolbar = NO;
     self.toolbar         = nil;
     self.view            = nil;
@@ -70,9 +71,12 @@
         float moveY      = (float) _viewObj.frame.origin.y;
         float moveWidth  = (float) _viewObj.frame.size.width;
         float moveHeight = (float) _viewObj.frame.size.height;
-        if( !_isBack ){
+        if( !_isBack )
+        {
             moveY -= _distance;
-        }else{
+        }
+        else
+        {
             moveY += _distance;
         }
         _viewObj.frame = CGRectMake( moveX, moveY, moveWidth, moveHeight );

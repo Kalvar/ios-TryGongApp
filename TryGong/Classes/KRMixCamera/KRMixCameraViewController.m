@@ -3,28 +3,19 @@
 //  
 //
 //  Created by Kalvar on 13/5/5.
-//  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013 - 2014 年 Kuo-Ming Lin. All rights reserved.
 //
 
 #import "KRMixCameraViewController.h"
 #import "VarDefines+HTTP.h"
 #import "KRCamera.h"
 #import "KRMixTemplateView.h"
+#import "KRViewDrags.h"
 
-//裁圖模式
-typedef enum _KRMixCameraImageCutModes
-{
-    //從中間裁
-    KRMixCameraImageCutModesForCenter = 1,
-    //左上
-	KRMixCameraImageCutModesForLeftTop,
-    //左下
-    KRMixCameraImageCutModesForLeftBottom,
-    //右上
-    KRMixCameraImageCutModesForRightTop,
-    //右下
-    KRMixCameraImageCutModesForRightBottom
-} KRMixCameraImageCutModes;
+#define IS_IOS7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f)
+
+//圖片縮放的倍數
+static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memory Crahs
 
 //覆寫 UIPageControl
 @interface UIPageControl (fixOverride)
@@ -91,6 +82,7 @@ typedef enum _KRMixCameraImageCutModes
 @property (nonatomic, strong) KRCamera *_krCamera;
 @property (nonatomic, strong) KRFacebook *_krFacebook;
 @property (nonatomic, strong) KRProgress *_krProgress;
+@property (nonatomic, strong) KRViewDrags *_krViewDrags;
 @property (nonatomic, strong) NSMutableArray *_templates;
 @property (nonatomic, strong) UIImage *_cameraImage;
 @property (nonatomic, assign) BOOL _doShareToFacebook;
@@ -132,19 +124,21 @@ typedef enum _KRMixCameraImageCutModes
 
 -(void)_initWithVars
 {
+    //已經沒有 3GS 不支援 @2x Retina 圖片的呎吋了，之後都直接使用 @2x 圖片即可，不用再特地製作 Non-Retina 的圖
     _templates = [[NSMutableArray alloc] initWithObjects:
-                  @"ele_fame_1.png",
-                  @"ele_fame_2.png",
-                  @"ele_fame_3.png",
-                  @"ele_fame_4.png",
-                  @"ele_fame_5.png",
-                  @"ele_fame_blank.png",
+                  @"ele_fame_6@2x.png",
+                  @"ele_fame_1@2x.png",
+                  @"ele_fame_2@2x.png",
+                  @"ele_fame_3@2x.png",
+                  @"ele_fame_4@2x.png",
+                  @"ele_fame_5@2x.png",
+                  @"ele_fame_blank@2x.png",
                   nil];
     self._cameraImage           = nil;
     self._doShareToFacebook     = NO;
     self.subtitle               = @"核電歸零";
     self.outWordsTextField.text = self.subtitle;
-    
+    self.outPhotoImageView.contentMode = UIViewContentModeScaleAspectFit;
 }
 
 -(BOOL)_isIphone5
@@ -168,9 +162,35 @@ typedef enum _KRMixCameraImageCutModes
     [self._krCamera remove];
 }
 
+/*
+ * @ 2014.02.23 PM 22:50
+ *
+ * @ 取圖的 Sample Size
+ *
+ *   //640 x 640
+ *   [self _image2xNamed:@"ele_fame_6"];
+ *
+ *   //1280 x 1280
+ *   [self _image2xNamed:@"ele_fame_6@2x.png"];
+ *
+ *   //1280 x 1280
+ *   [self _image2xNamed:@"ele_fame_6@2x"];
+ *
+ *   //640 x 640
+ *   [self _imageNamedNoCache:@"ele_fame_6@2x.png"]; //跟 @"ele_fame_6.png" 相同
+ *
+ */
+//用 imageWithContentsOfFile 取出的圖片都會是小張圖，@2x 的圖片並不會被取出，要使用 imageNamed 方法才會取出 @2x 大圖
 -(UIImage *)_imageNamedNoCache:(NSString *)name
 {
+    //要顯示給 User 看的圖可以用這方法，而要合成上傳的圖則要使用 imageNamed 方法才能取到大張原始圖
     return [UIImage imageWithContentsOfFile:[NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] bundlePath], name]];
+}
+
+//取出 @2x 的圖
+-(UIImage *)_image2xNamed:(NSString *)_name
+{
+    return [UIImage imageNamed:_name];
 }
 
 #pragma UIScrollView
@@ -242,25 +262,48 @@ typedef enum _KRMixCameraImageCutModes
  *   - _baseImage          : 要當基底的圖片
  *   - _underImage         : 要蓋上來的圖片
  *   - _matchBaseImageSize : 欲結合的圖片是否要放到跟基底的圖片一樣大
+ *
+ * @ 合成圖片的要訣
+ *   - 要結合的 2 張圖片可不限大小進行合成，唯要注意要蓋上來的圖片座標位置得擺對。
+ *
  */
 -(UIImage *)_mergeBaseImage:(UIImage *)_baseImage
                  underImage:(UIImage *)_underImage
          matchBaseImageSize:(BOOL)_matchBaseImageSize
 {
 	/*
-     * @ 設定基底的畫布內容
-     *   - 以 _baseImage 為底圖
+     * @ 先作一張空白當基底的畫布
+     *   - 因為圖片要以 AspectFit 最適呎吋的檥式呈現，故改以呈現的 UIImageView 的呎吋為底圖呎吋，而 _baseImage 是用來直接畫出的原呈現圖片。
+     *   - //以 _baseImage 的呎吋為底圖
+     *
+     * @ 2014.02.23 PM 22:30
+     *   - 將 UIScreen mainScreen].scale 改成使用自訂縮放的比例 _kKRMixImageScaleRatio，
+     *     以讓合成後的圖片為 960 x 960
      */
-    UIGraphicsBeginImageContext(_baseImage.size);
-    //主要圖片
-	[_baseImage drawInRect:CGRectMake(0, 0, _baseImage.size.width, _baseImage.size.height)];
-    //要結合進來的 _image2 放大到跟 _image1 一樣呎吋
-    /*
-     * @ 是否要將蓋上來結合的圖片 ( _unserImage ) 放到跟原基底的圖 ( _baseImage ) 一樣大
-     */
+    CGFloat _screenScale = _kKRMixImageScaleRatio; //[UIScreen mainScreen].scale;
+    CGSize _drawSize     = self.outPhotoImageView.frame.size; //_baseImage.size;
+    _drawSize.width     *= _screenScale;
+    _drawSize.height    *= _screenScale;
+    
+    //製作畫布
+    UIGraphicsBeginImageContext( _drawSize );
+    CGContextRef currentContext = UIGraphicsGetCurrentContext();
+    
+    //填滿底色 ( 黑色 )
+    UIColor *_backgroundColor = [UIColor blackColor];
+    CGRect fillRect = CGRectMake(0.0f, 0.0f, _drawSize.width, _drawSize.height);
+    CGContextSetFillColorWithColor(currentContext, _backgroundColor.CGColor);
+    CGContextFillRect(currentContext, fillRect);
+    
+    //主要圖片, 並重設要作畫的 X, Y 軸，讓圖片垂直置中畫出
+    CGFloat _baseX = ( _drawSize.width - _baseImage.size.width ) / 2;   //0.0f
+    CGFloat _baseY = ( _drawSize.height - _baseImage.size.height ) / 2; //0.0f
+	[_baseImage drawInRect:CGRectMake(_baseX, _baseY, _baseImage.size.width, _baseImage.size.height)];
+    //將蓋上來結合的圖片 ( _unserImage ) 放到跟原基底的圖 ( _baseImage ) 一樣大
     if( _matchBaseImageSize )
     {
-        [_underImage drawInRect:CGRectMake(0, 0, _baseImage.size.width, _baseImage.size.height)];
+        //畫上去的區域一樣從 ( 0, 0 ) 開始畫起
+        [_underImage drawInRect:CGRectMake(0.0f, 0.0f, _drawSize.width, _drawSize.height)];
     }
     else
     {
@@ -268,7 +311,7 @@ typedef enum _KRMixCameraImageCutModes
          * @ _underImage 保持原呎吋
          *   - 如果之後要做「上下撥圖片」的 320 x 160 圖片，就改變這裡要結合的 Y 座標值即可，就能保持要結合的圖片座標位置。
          */
-        [_underImage drawInRect:CGRectMake(0, 0, _underImage.size.width, _underImage.size.height)];
+        [_underImage drawInRect:CGRectMake(0.0f, 0.0f, _underImage.size.width, _underImage.size.height)];
     }
     //重繪圖
 	UIImage *_mergedImage = UIGraphicsGetImageFromCurrentImageContext();
@@ -293,7 +336,7 @@ typedef enum _KRMixCameraImageCutModes
     {
         KRMixTemplateView *_krMixTemplateView = [[KRMixTemplateView alloc] initWithFrame:CGRectMake(_x, _y, _width, _height)];
         _krMixTemplateView.imageId            = [NSString stringWithFormat:@"%i", _index];
-        _krMixTemplateView.imageView.image    = [self _imageNamedNoCache:_templateImageName];
+        _krMixTemplateView.imageView.image    = [self _image2xNamed:_templateImageName];
         _krMixTemplateView.titleLabel.text    = self.subtitle;
         /*
          * @ 設計想法 ( 2013.06.01 23:50 )
@@ -304,7 +347,8 @@ typedef enum _KRMixCameraImageCutModes
          */
         switch (_index)
         {
-            case 5:
+            //共幾張圖片型
+            case 6:
                 _krMixTemplateView.krMixTemplateTitleLabelMode = KRMixTemplateTitleLabelMode10;
                 break;
             default:
@@ -394,14 +438,16 @@ typedef enum _KRMixCameraImageCutModes
      *    - 1. 先取出照相後的照片當 _baseImage
      *    - 2. 再取出當前的字幕圖片 _unserImage
      */
+    self.outPhotoImageView.image = nil;
     NSInteger _index             = [self _calculateCurrentPage];
     KRMixTemplateView *_subview  = (KRMixTemplateView *)[[self.outScrollView subviews] objectAtIndex:_index];
+    UIImage *_captureImage       = _subview.displayImage; //[_subview captureImageFromView];
     self.outPhotoImageView.image = [self _mergeBaseImage:self._cameraImage
-                                              underImage:[_subview captureImageFromView]
+                                              underImage:_captureImage
                                       matchBaseImageSize:YES];
     [self._krFacebook uploadWithImage:self.outPhotoImageView.image andDescription:self.outWordsTextField.text];
     [self _dismissShareView];
-    [self _showAlertWithMessage:@"Cool, You Shared!"];
+    [self _showAlertWithMessage:@"感謝您參與反核!"];
     if( self.delegate )
     {
         if( [self.delegate respondsToSelector:@selector(krMixCameraWantToSharePhoto:)] )
@@ -458,26 +504,25 @@ typedef enum _KRMixCameraImageCutModes
     CGRect _frame    = CGRectMake(_x, _y, _toWidth, _toHeight);
     float _oldWidth  = _image.size.width;
     float _oldHeight = _image.size.height;
-    if( !_cutMode )
-    {
-        _cutMode = KRMixCameraImageCutModesForCenter;
-    }
     //先進行等比例縮圖
-    float _scaleRatio   = MAX( (_toWidth / _oldWidth), (_toHeight / _oldHeight) );
+    float _scaleRatio   = MAX( (_toWidth / _oldWidth), (_toHeight / _oldHeight) ); //MIN
     float _equalWidth   = (int)( _oldWidth * _scaleRatio );
     float _equalHeight  = (int)( _oldHeight * _scaleRatio );
     _image = [self _scaleImage:_image toSize:CGSizeMake(_equalWidth, _equalHeight)];
-    //中心剪裁
-    if( _cutMode == KRMixCameraImageCutModesForCenter )
+    switch (_cutMode)
     {
-        _x = floor( (_equalWidth -  _toWidth) / 2 );
-        _y = floor( (_equalHeight - _toHeight) / 2 );
-    }
-    else if( _cutMode == KRMixCameraImageCutModesForLeftTop )
-    {
-        //左上開始裁
-        _x     = 0.0f;
-        _y     = 0.0f;
+        case KRMixCameraImageCutModesForCenter:
+            //中心剪裁
+            _x = floor( (_equalWidth -  _toWidth) / 2 );
+            _y = floor( (_equalHeight - _toHeight) / 2 );
+            break;
+        case KRMixCameraImageCutModesForLeftTop:
+            //左上開始裁
+            _x     = 0.0f;
+            _y     = 0.0f;
+            break;
+        default:
+            break;
     }
     _frame = CGRectMake(_x, _y, _toWidth, _toHeight);
     CGImageRef _smallImage = CGImageCreateWithImageInRect( [_image CGImage], _frame );
@@ -520,6 +565,7 @@ typedef enum _KRMixCameraImageCutModes
 @synthesize _krCamera;
 @synthesize _krFacebook;
 @synthesize _krProgress;
+@synthesize _krViewDrags;
 @synthesize _templates;
 @synthesize _cameraImage;
 @synthesize _doShareToFacebook;
@@ -567,13 +613,22 @@ typedef enum _KRMixCameraImageCutModes
     [self _dismissShareView];
     [self _checkLogged];
     [self startCamera];
+    _krViewDrags = [[KRViewDrags alloc] initWithView:self.outControlView
+                                            dragMode:krViewDragModeFromRightToLeft];
+    self._krViewDrags.sideInstance = 161.0f;
+    self._krViewDrags.durations    = 0.15f;
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    //[self._krCamera wantToFullScreen];
-    //[self startCamera];
+    [self._krViewDrags start];
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    [self._krViewDrags stop];
 }
 
 - (void)didReceiveMemoryWarning
@@ -639,8 +694,15 @@ typedef enum _KRMixCameraImageCutModes
  */
 -(IBAction)takePicture:(id)sender
 {
+    //在 4S 上拍照會很容易 Memory Crash
     [self._krProgress startOnTranslucentView:self.outCameraView tipTitle:@"正在處理照片"];
     [self._krCamera takeOnePicture];
+    /*
+    dispatch_async(dispatch_get_main_queue(), ^
+    {
+        [self._krCamera takeOnePicture];
+    });
+     */
 }
 
 /*
@@ -832,28 +894,42 @@ typedef enum _KRMixCameraImageCutModes
  */
 -(void)krCameraDidFinishPickingImage:(UIImage *)_image imagePath:(NSString *)_imagePath imagePickerController:(UIImagePickerController *)_imagePicker
 {
+    //2448 x 3264
+    //NSLog(@"_image 1 size : %f, %f", _image.size.width, _image.size.height);
+    
     /*
      * @ 在這裡上傳與分享剪裁選擇好的圖片
      */
     /*
-     * @ 是 iPhone 5 就中間裁圖
+     * @ 原先認為，是 iPhone 5 就中間裁圖
      *   - 如果是 4 / 4S 就左上角裁圖，這是因為 Device 不同，
      *     那，原始要裁切的圖片呎吋就不同，這會造成 4S 如果也以中心點裁圖時，就會產生錯位的情況。
+     *
+     * @ 2014.02.23 PM 23:12 修正上述觀念
+     *   - 跟 iPhone 5 沒有關係，跟 iOS 6 與 7 之間的差異有關 : 
+     *     - iOS 6，iPhone 4S 才需要使用「左上角裁圖」的模式
+     *     - iOS 7，iPhone 4S 直接使用「中間點裁圖」的模式
+     *     - iOS 7，iPhone 5  需要使用「左上角裁圖」的模式
+     *
      */
     if( [self _isIphone5] )
     {
         self._cameraImage = [self _scaleCutImage:_image
-                                         toWidth:320.0f * 2
-                                        toHeight:320.0f * 2
-                                         cutMode:KRMixCameraImageCutModesForCenter];
+                                         toWidth:320.0f * _kKRMixImageScaleRatio
+                                        toHeight:320.0f * _kKRMixImageScaleRatio
+                                         cutMode:KRMixCameraImageCutModesForLeftTop];
     }
     else
     {
         self._cameraImage = [self _scaleCutImage:_image
-                                         toWidth:320.0f * 2
-                                        toHeight:320.0f * 2
-                                         cutMode:KRMixCameraImageCutModesForLeftTop];
+                                         toWidth:320.0f * _kKRMixImageScaleRatio
+                                        toHeight:320.0f * _kKRMixImageScaleRatio
+                                         cutMode:KRMixCameraImageCutModesForCenter];
     }
+    
+    //960 x 960
+    //NSLog(@"_cameraImage 1 size : %f, %f", _cameraImage.size.width, _cameraImage.size.height);
+    
     [self._krProgress stopFromTranslucentViewAndRemoveTipTitle:self.outCameraView];
     if( self._krCamera.sourceMode == KRCameraModesForSelectAlbum )
     {
@@ -881,9 +957,12 @@ typedef enum _KRMixCameraImageCutModes
      * @ 這裡就不需要判斷 Device 而有不同的裁切方式
      *   - 這是因為圖片會先被 User 編輯過的關係，所以中心點裁圖也會剛剛好。
      */
+    
+    //NSLog(@"_image 2 size : %f, %f", _image.size.width, _image.size.height);
+    
     self._cameraImage = [self _scaleCutImage:_image
-                                     toWidth:320.0f * 2
-                                    toHeight:320.0f * 2
+                                     toWidth:320.0f * _kKRMixImageScaleRatio
+                                    toHeight:320.0f * _kKRMixImageScaleRatio
                                      cutMode:KRMixCameraImageCutModesForCenter];
     if( self._krCamera.sourceMode == KRCameraModesForSelectAlbum )
     {
@@ -898,6 +977,7 @@ typedef enum _KRMixCameraImageCutModes
         //[self _removeCamera];
         //[self sharePhoto:nil];
     }
+    //_image = nil;
 }
 
 /*

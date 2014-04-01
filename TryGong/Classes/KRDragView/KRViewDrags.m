@@ -44,8 +44,10 @@
 
 @implementation KRViewDrags (fixDrages)
 
--(void)_initWithVars{
-    if( self.view ){
+-(void)_initWithVars
+{
+    if( self.view )
+    {
         self._gestureView   = self.view;
         self._orignalPoints = self._gestureView.center;
         [self _resetMatchPoints];
@@ -106,11 +108,13 @@
     [UIView commitAnimations];
 }
 
--(void)_finalDragging:(CGPoint)_viewCenter{
+-(void)_finalDragging:(CGPoint)_viewCenter
+{
     CGFloat _screenWidth  = self._gestureView.frame.size.width;
     CGFloat _moveDistance = 0.0f;
     BOOL _throughCenter    = NO;
-    switch (self.dragMode) {
+    switch (self.dragMode)
+    {
         case krViewDragModeFromLeftToRight:
             _moveDistance  = _screenWidth - self.sideInstance;
             //檢查 X 是否已過中線
@@ -128,11 +132,14 @@
         default:
             break;
     }
-    if( _throughCenter ){
+    if( _throughCenter )
+    {
         //打開
         [self _moveView:self._gestureView toX:_moveDistance toY:0.0f];
         self._isOpening = YES;
-    }else{
+    }
+    else
+    {
         //回到原點
         [self _moveView:self._gestureView toX:0.0f toY:0.0f];
         self._isOpening = NO;
@@ -143,7 +150,6 @@
  * @Bugs
  *   1). 在快速移動至原點( 0, 0 )時，會出現超出原點範圍的跑版情形。
  */
-
 -(void)_handleDrag:(UIPanGestureRecognizer*)_panGesture
 {
     //目前手勢 View 的中心位置
@@ -162,7 +168,8 @@
 //    NSLog(@"center.x : %f", center.x);
 //    NSLog(@"trans.x : %f\n\n", translation.x);
     
-    switch (self.dragMode) {
+    switch (self.dragMode)
+    {
         case krViewDragModeFromLeftToRight:
             /*
              * 只允許往右移動
@@ -187,8 +194,10 @@
             break;
     }
     //拖拉移動
-    if (_panGesture.state == UIGestureRecognizerStateChanged) {
-        if( center.y == self._matchPoints.y ){
+    if (_panGesture.state == UIGestureRecognizerStateChanged)
+    {
+        if( center.y == self._matchPoints.y )
+        {
             //NSLog(@"center.x : %f", center.x);
             //NSLog(@"translation.x : %f\n\n", translation.x);
             center = CGPointMake(center.x + translation.x, self._matchPoints.y);
@@ -197,7 +206,8 @@
         }
     }
     //結束觸碰
-    if(_panGesture.state == UIGestureRecognizerStateEnded){
+    if(_panGesture.state == UIGestureRecognizerStateEnded)
+    {
         [self _finalDragging:viewCenter];
     }
 }
@@ -207,7 +217,8 @@
  *   這裡的 Swipe 手勢會跟 Drag ( Pan ) 的手勢互衝，而無明顯之作用 ( 僅偶有作用 )。
  *   故暫時先不使用。
  */
--(void)_allocSwipeGesture{
+-(void)_allocSwipeGesture
+{
     //只 alloc 一次
     if( !_leftGestureRecognizer ){
         _leftGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self
@@ -221,7 +232,8 @@
     }
 }
 
--(void)_addViewSwipeGesture{
+-(void)_addViewSwipeGesture
+{
     //向左滑
     [self._gestureView addGestureRecognizer:self._leftGestureRecognizer];
     //向右滑

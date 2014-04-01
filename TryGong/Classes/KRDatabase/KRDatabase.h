@@ -11,7 +11,7 @@
 #import <sqlite3.h>
 #import <CoreLocation/CoreLocation.h>
 
-#define DBNAME              @"i98_db"
+#define DBNAME              @"trygong_db"
 #define DBEXT               @".sqlite3"
 #define DEFAULT_STRING      @"NO"
 #define DEFAULT_LIMIT_START 0

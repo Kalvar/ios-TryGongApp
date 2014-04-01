@@ -79,10 +79,8 @@
 /*
  * @ 當離開 App 進行登入的動作時，跳回來時的處理動作在這裡執行
  */
-- (BOOL)application:(UIApplication *)application
-            openURL:(NSURL *)url
-  sourceApplication:(NSString *)sourceApplication
-         annotation:(id)annotation {
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
     // attempt to extract a token from the url
     return [self.session handleOpenURL:url];
 }
@@ -93,7 +91,8 @@
 // to your application; if a session is not properly closed, a retain cycle may occur between the block
 // and an object that holds a reference to the session object; close releases the handler, breaking any
 // inadvertant retain cycles
-- (void)applicationWillTerminate:(UIApplication *)application {
+- (void)applicationWillTerminate:(UIApplication *)application
+{
     // FBSample logic
     // if the app is going away, we close the session if it is open
     // this is a good idea because things may be hanging off the session, that need
@@ -108,7 +107,8 @@
 // state in applicationDidBecomeActive, to identify this situation and close the session; a more sophisticated
 // application may choose to notify the user that they switched away from the Facebook application without
 // completely logging in
-- (void)applicationDidBecomeActive:(UIApplication *)application {
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{
     /*
      Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
      */

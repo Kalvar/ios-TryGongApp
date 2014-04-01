@@ -10,7 +10,8 @@
 #import <UIKit/UIKit.h>
 
 //拖拉模式
-typedef enum _krViewDragModes {
+typedef enum _krViewDragModes
+{
     //由左至右
     krViewDragModeFromLeftToRight = 0,
     //由右至左
@@ -19,7 +20,8 @@ typedef enum _krViewDragModes {
     krViewDragModeBoth
 } krViewDragModes;
 
-@interface KRViewDrags : NSObject{
+@interface KRViewDrags : NSObject
+{
     //作用的 View
     UIView *view;
     //拖拉模式

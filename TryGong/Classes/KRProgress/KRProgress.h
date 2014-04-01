@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface KRProgress : NSObject{
+@interface KRProgress : NSObject
+{
     UIView *view;
     UIActivityIndicatorViewStyle activityStyle;
     NSString *tip;

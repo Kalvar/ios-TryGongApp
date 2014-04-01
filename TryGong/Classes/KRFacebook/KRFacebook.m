@@ -249,13 +249,7 @@
 -(void)_uploadWithMediaConfigs:(NSDictionary *)_mediaConfigs{
     self.executing  = @"upload.media";
     self.processing = KRFacebookProcessForUploadMedia;
-    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:_mediaConfigs];
-//    [facebook requestWithGraphPath:@"me/videos"
-//                         andParams:params 
-//                     andHttpMethod:@"POST"
-//                       andDelegate:self];
-    
-    
+    NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:_mediaConfigs];    
     FBRequest *_fbRequest = [[FBRequest alloc] initWithSession:self.fbSession
                                                      graphPath:@"me/videos"
                                                     parameters:params
@@ -616,7 +610,8 @@
  *   _description : 圖片敍述，可用 \n 斷行
  */ 
 -(void)uploadWithPhotoUrl:(id)_imageUrl 
-           andDescription:(NSString *)_description{
+           andDescription:(NSString *)_description
+{
     self.executing  = @"upload.photos"; 
     self.processing = KRFacebookProcessForUploadPhoto;
     NSMutableDictionary *params = [NSMutableDictionary dictionaryWithDictionary:[self _setupParamsWithUploadImageUrl:_imageUrl 
@@ -638,7 +633,8 @@
  *   _description : 圖片敍述，可用 \n 斷行
  */
 -(void)uploadWithImage:(UIImage *)_image 
-        andDescription:(NSString *)_description{
+        andDescription:(NSString *)_description
+{
     self.executing  = @"upload.photos"; 
     self.processing = KRFacebookProcessForUploadPhoto;
 	NSMutableDictionary *params = [NSMutableDictionary dictionaryWithObjectsAndKeys:

@@ -78,6 +78,7 @@
 @synthesize imageView;
 @synthesize titleLabel;
 @synthesize krMixTemplateTitleLabelMode = _krMixTemplateTitleLabelMode;
+@synthesize displayImage                = _displayImage;
 
 
 -(id)init
@@ -110,7 +111,7 @@
  * @ 將指定的 UIView 整個螢幕截圖存成 UIImage
  */
 -(UIImage *)captureImageFromView
-{
+{    
     UIView *theView = self;
     /*
      * @ 指定繪圖區域
@@ -132,6 +133,14 @@
     UIImage *captureImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     return captureImage;
+}
+
+/*
+ * @ 取得當前顯示的圖
+ */
+-(UIImage *)displayImage
+{
+    return [imageView image];
 }
 
 -(void)display
