@@ -18,7 +18,7 @@ Just playing it, have a fun that it still an open source.
 
 ## Version
 
-TryGong now is V1.1.
+TryGong now is V1.3.
 
 ## License
 
