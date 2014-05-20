@@ -4,7 +4,7 @@
 //  ilovekalvar@gmail.com
 //
 //  Created by Kuo-Ming Lin on 2012/08/01.
-//  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013 - 2014年 Kuo-Ming Lin. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -115,10 +115,15 @@ typedef enum _KRCameraModes {
  */
 -(BOOL)isIpadDevice;
 -(BOOL)isIphone5;
+-(BOOL)isIOS7;
 /*
  * @ 偵測 Device 支援項目
  */
 -(BOOL)isDeviceSupportsCamera;
+/*
+ * @ 寫入相簿
+ */
+-(void)saveToAlbum:(UIImage *)_image completion:(void(^)(NSURL *assetURL, NSError *error))_completion;
 
 @end
 

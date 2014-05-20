@@ -4,7 +4,7 @@
 //  ilovekalvar@gmail.com
 //
 //  Created by Kuo-Ming Lin on 2012/08/01.
-//  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013 - 2014年 Kuo-Ming Lin. All rights reserved.
 //
 
 #import "KRCamera.h"
@@ -16,6 +16,8 @@
 static NSInteger _krCameraCancelButtonTag = 2099;
 
 @interface KRCamera ()<UIPopoverControllerDelegate>
+
+@property (nonatomic, assign) BOOL _hideStatusBar;
 
 @end
 
@@ -154,10 +156,32 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 {
     UIImage *savedImage = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     //儲存圖片(這樣存才能取得圖片 Path)
-    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    [self saveToAlbum:savedImage completion:^(NSURL *assetURL, NSError *error)
+    {
+        if( !error )
+        {
+            //一般原始圖
+            if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] )
+            {
+                [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
+                                                           imagePath:[NSString stringWithFormat:@"%@", assetURL]
+                                               imagePickerController:picker];
+            }
+            
+            //含有完整 EXIF 等 METADATA 資訊的圖片
+            if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:metadata:imagePickerController:)] )
+            {
+                [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
+                                                           imagePath:[NSString stringWithFormat:@"%@", assetURL]
+                                                            metadata:[info objectForKey:UIImagePickerControllerMediaMetadata]
+                                               imagePickerController:picker];
+            }
+        }
+    }];
     
     /*
     // Get the image metadata (EXIF & TIFF)
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
     NSMutableDictionary *_metadata = [[info objectForKey:UIImagePickerControllerMediaMetadata] mutableCopy];
     // add GPS data
     [_metadata setObject:[self getGPSDictionaryForLocation] forKey:(NSString*)kCGImagePropertyGPSDictionary];
@@ -180,30 +204,6 @@ static NSInteger _krCameraCancelButtonTag = 2099;
         }
     }];
     */
-    
-    [library writeImageToSavedPhotosAlbum:[savedImage CGImage]
-                              orientation:(ALAssetOrientation)[savedImage imageOrientation]
-                          completionBlock:^(NSURL *assetURL, NSError *error){
-                              if(error) {
-                                  //NSLog(@"error");
-                              }else{
-                                  //一般原始圖
-                                  if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:imagePickerController:)] )
-                                  {
-                                      [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
-                                                                                   imagePath:[NSString stringWithFormat:@"%@", assetURL]
-                                                                       imagePickerController:picker];
-                                  }
-                                  //含有完整 EXIF 等 METADATA 資訊的圖片
-                                  if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingImage:imagePath:metadata:imagePickerController:)] )
-                                  {
-                                      [self.KRCameraDelegate krCameraDidFinishPickingImage:savedImage
-                                                                                   imagePath:[NSString stringWithFormat:@"%@", assetURL]
-                                                                                    metadata:[info objectForKey:UIImagePickerControllerMediaMetadata]
-                                                                       imagePickerController:picker];
-                                  }
-                              }
-                          }];
 }
 
 @end
@@ -255,6 +255,7 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     self.supportCamera    = [self _isDeviceSupportsCamera];
     self.keepFullScreen   = NO;
     self.sizeToFitIphone5 = NO;
+    self._hideStatusBar   = NO;
 }
 
 -(void)_makeiPadCancelButtonOnPopCameraView
@@ -312,7 +313,23 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 
 -(void)_appearStatusBar:(BOOL)_isAppear
 {
+    /*
+     * @ 2014.05.09 PM 12:20
+     *   - 因應在 iOS 7.1 以上會有 StatusBar 無法恢復顯示的情況發生，
+     *     就必須改變這裡的流程為先執行 setStatusBarHidden 方法，
+     *     之後再呼叫 setNeedsStatusBarAppearanceUpdate 方法更新 StatusBar 即可。
+     */
     [[UIApplication sharedApplication] setStatusBarHidden:!_isAppear];
+    if( [self isIOS7] )
+    {
+        //Only supports iOS7
+        if ([self respondsToSelector:@selector(setNeedsStatusBarAppearanceUpdate)])
+        {
+            //Have to use this update the status bar
+            self._hideStatusBar = !_isAppear;
+            [self performSelector:@selector(setNeedsStatusBarAppearanceUpdate)];
+        }
+    }
 }
 
 -(BOOL)_isDeviceSupportsCamera
@@ -467,6 +484,8 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 @synthesize keepFullScreen;
 @synthesize sizeToFitIphone5;
 
+@synthesize _hideStatusBar;
+
 -(id)initWithDelete:(id<KRCameraDelegate>)_krCameraDelegate pickerMode:(KRCameraModes)_pickerMode
 {
     self = [super init];
@@ -527,6 +546,12 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 {
     [super didReceiveMemoryWarning];
     
+}
+#pragma --mark iOS 7
+//Hide / Show StatusBar
+-(BOOL)prefersStatusBarHidden
+{
+    return self._hideStatusBar;
 }
 
 #pragma MyMethods
@@ -616,14 +641,17 @@ static NSInteger _krCameraCancelButtonTag = 2099;
  */
 -(void)remove
 {
-    if( self.view.superview )
+    dispatch_async(dispatch_get_main_queue(), ^
     {
-        [self.view removeFromSuperview];
-    }
-    if( self.parentTarget )
-    {
-        self.parentTarget = nil;
-    }
+        if( self.view.superview )
+        {
+            [self.view removeFromSuperview];
+        }
+        if( self.parentTarget )
+        {
+            self.parentTarget = nil;
+        }
+    });
 }
 
 /*
@@ -662,7 +690,8 @@ static NSInteger _krCameraCancelButtonTag = 2099;
  */
 -(void)takeOnePicture
 {
-    [super takePicture];
+   [super takePicture];
+    //NSLog(@"Picture 1 : %@", [NSDate date]);
     /*
     //@用這裡超單純的呼叫相機，拍照也還是會出現 Memory Warning XD
     //建立選取器
@@ -764,10 +793,29 @@ static NSInteger _krCameraCancelButtonTag = 2099;
     return [self _isIphone5];
 }
 
+-(BOOL)isIOS7
+{
+    return ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f);
+}
+
 -(BOOL)isDeviceSupportsCamera
 {
     self.supportCamera = [self _isDeviceSupportsCamera];
     return self.supportCamera;
+}
+
+-(void)saveToAlbum:(UIImage *)_image completion:(void (^)(NSURL *, NSError *))_completion
+{
+    //儲存圖片(這樣存才能取得圖片 Path)
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    [library writeImageToSavedPhotosAlbum:[_image CGImage]
+                              orientation:(ALAssetOrientation)[_image imageOrientation]
+                          completionBlock:^(NSURL *assetURL, NSError *error){
+                              if( _completion )
+                              {
+                                  _completion(assetURL, error);
+                              }
+                          }];
 }
 
 #pragma Setters
@@ -786,7 +834,9 @@ static NSInteger _krCameraCancelButtonTag = 2099;
 #pragma UIImagePickerDelegate
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingMediaWithInfo:imagePickerController:)] ){
+    //NSLog(@"Picture 2 : %@", [NSDate date]);
+    if( [self.KRCameraDelegate respondsToSelector:@selector(krCameraDidFinishPickingMediaWithInfo:imagePickerController:)] )
+    {
         [self.KRCameraDelegate krCameraDidFinishPickingMediaWithInfo:info imagePickerController:picker];
     }
     /*

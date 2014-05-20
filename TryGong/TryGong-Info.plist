@@ -24,7 +24,7 @@
 		<string>Icon-Small-50@2x.png</string>
 	</array>
 	<key>CFBundleIdentifier</key>
-	<string></string>
+	<string>com.share.trygong</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
@@ -37,7 +37,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.3</string>
+	<string>1.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -58,7 +58,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1.3</string>
+	<string>1.4</string>
 	<key>FacebookAppID</key>
 	<string>281589681972451</string>
 	<key>LSRequiresIPhoneOS</key>

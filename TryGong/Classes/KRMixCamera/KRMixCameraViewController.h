@@ -1,9 +1,9 @@
 //
 //  KRMixCameraViewController.h
-//  
+//  V1.4 
 //
 //  Created by Kalvar on 13/5/5.
-//  Copyright (c) 2013 - 2014 年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013 - 2014年 Kuo-Ming Lin. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
@@ -54,6 +54,7 @@ typedef enum KRMixCameraImageCutModes
 -(void)startCamera;
 -(void)dismiss;
 -(void)clearMemory;
+
 -(IBAction)takePicture:(id)sender;
 -(IBAction)choosePicture:(id)sender;
 -(IBAction)changeCamera:(id)sender;
@@ -65,6 +66,7 @@ typedef enum KRMixCameraImageCutModes
 -(IBAction)shareToFacebook:(id)sender;
 -(IBAction)cancelShare:(id)sender;
 -(IBAction)loginFacebook:(id)sender;
+-(IBAction)saveInAlbum:(id)sender;
 
 @end
 

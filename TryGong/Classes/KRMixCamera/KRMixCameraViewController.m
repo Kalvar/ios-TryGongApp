@@ -1,9 +1,9 @@
 //
 //  KRMixCameraViewController.m
-//  
+//  V1.4
 //
 //  Created by Kalvar on 13/5/5.
-//  Copyright (c) 2013 - 2014 年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013 - 2014年 Kuo-Ming Lin. All rights reserved.
 //
 
 #import "KRMixCameraViewController.h"
@@ -11,6 +11,7 @@
 #import "KRCamera.h"
 #import "KRMixTemplateView.h"
 #import "KRViewDrags.h"
+#import "KRCountDown.h"
 
 #define IS_IOS7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f)
 
@@ -87,6 +88,8 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 @property (nonatomic, strong) UIImage *_cameraImage;
 @property (nonatomic, assign) BOOL _doShareToFacebook;
 
+//@property (nonatomic, strong) KRCountDown *_krCountDown;
+
 @end
 
 @interface KRMixCameraViewController (fixPrivate)
@@ -126,7 +129,6 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 {
     //已經沒有 3GS 不支援 @2x Retina 圖片的呎吋了，之後都直接使用 @2x 圖片即可，不用再特地製作 Non-Retina 的圖
     _templates = [[NSMutableArray alloc] initWithObjects:
-                  @"ele_fame_6@2x.png",
                   @"ele_fame_1@2x.png",
                   @"ele_fame_2@2x.png",
                   @"ele_fame_3@2x.png",
@@ -151,6 +153,11 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
         return YES;
     }
     return NO;
+}
+
+-(BOOL)_isIos7
+{
+    return ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f);
 }
 
 -(void)_removeCamera
@@ -320,6 +327,23 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 	return _mergedImage;
 }
 
+/*
+ * @ 結合圖片，以便於 :
+ *   - 1. 準備分享至 Facebook
+ *   - 2. 存入相簿
+ */
+-(void)_mergedImage
+{
+    //outPhotoImageView 是用來儲存合成圖片的
+    self.outPhotoImageView.image = nil;
+    NSInteger _index             = [self _calculateCurrentPage];
+    KRMixTemplateView *_subview  = (KRMixTemplateView *)[[self.outScrollView subviews] objectAtIndex:_index];
+    UIImage *_captureImage       = _subview.displayImage; //[_subview captureImageFromView];
+    self.outPhotoImageView.image = [self _mergeBaseImage:self._cameraImage
+                                              underImage:_captureImage
+                                      matchBaseImageSize:YES];
+}
+
 #pragma Templates
 /*
  * @ 加入預設的字幕組
@@ -341,14 +365,14 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
         /*
          * @ 設計想法 ( 2013.06.01 23:50 )
          *
-         *   - V1.0 先不加自訂字幕
-         *   - V2.0 再加自訂字幕
+         *   - V1.0 不加自訂字幕
+         *   - V1.2 加自訂字幕
          *
          */
         switch (_index)
         {
             //共幾張圖片型
-            case 6:
+            case 5:
                 _krMixTemplateView.krMixTemplateTitleLabelMode = KRMixTemplateTitleLabelMode10;
                 break;
             default:
@@ -438,13 +462,7 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
      *    - 1. 先取出照相後的照片當 _baseImage
      *    - 2. 再取出當前的字幕圖片 _unserImage
      */
-    self.outPhotoImageView.image = nil;
-    NSInteger _index             = [self _calculateCurrentPage];
-    KRMixTemplateView *_subview  = (KRMixTemplateView *)[[self.outScrollView subviews] objectAtIndex:_index];
-    UIImage *_captureImage       = _subview.displayImage; //[_subview captureImageFromView];
-    self.outPhotoImageView.image = [self _mergeBaseImage:self._cameraImage
-                                              underImage:_captureImage
-                                      matchBaseImageSize:YES];
+    [self _mergedImage];
     [self._krFacebook uploadWithImage:self.outPhotoImageView.image andDescription:self.outWordsTextField.text];
     [self _dismissShareView];
     [self _showAlertWithMessage:@"感謝您參與反核!"];
@@ -545,6 +563,75 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 
 @end
 
+@implementation KRMixCameraViewController (fixResults)
+
+-(void)_showResultImage:(UIImage *)_image withImagePickerController:(UIImagePickerController *)_imagePicker
+{
+    /*
+     * @ 原先認為，是 iPhone 5 就中間裁圖
+     *   - 如果是 4 / 4S 就左上角裁圖，這是因為 Device 不同，
+     *     那，原始要裁切的圖片呎吋就不同，這會造成 4S 如果也以中心點裁圖時，就會產生錯位的情況。
+     *
+     * @ 2014.02.23 PM 23:12 修正上述觀念
+     *   - 跟 iPhone 5 沒有關係，跟 iOS 6 與 7 之間的差異有關 :
+     *     - iOS 6，iPhone 4S 才需要使用「左上角裁圖」的模式, KRMixCameraImageCutModesForLeftTop
+     *     - iOS 6，iPhone 5  需要使用「中間點裁圖」的模式, KRMixCameraImageCutModesForCenter
+     *     - iOS 7，iPhone 4S 直接使用「中間點裁圖」的模式, KRMixCameraImageCutModesForLeftTop
+     *     - iOS 7，iPhone 5  需要使用「左上角裁圖」的模式, KRMixCameraImageCutModesForCenter
+     *
+     */
+    if( [self _isIphone5] )
+    {
+        KRMixCameraImageCutModes _cutMode = KRMixCameraImageCutModesForLeftTop;
+        if( ![self _isIos7] )
+        {
+            _cutMode = KRMixCameraImageCutModesForCenter;
+        }
+        self._cameraImage = [self _scaleCutImage:_image
+                                         toWidth:320.0f * _kKRMixImageScaleRatio
+                                        toHeight:320.0f * _kKRMixImageScaleRatio
+                                         cutMode:_cutMode];
+    }
+    else
+    {
+        KRMixCameraImageCutModes _cutMode = KRMixCameraImageCutModesForCenter;
+        if( ![self _isIos7] )
+        {
+            _cutMode = KRMixCameraImageCutModesForLeftTop;
+        }
+        self._cameraImage = [self _scaleCutImage:_image
+                                         toWidth:320.0f * _kKRMixImageScaleRatio
+                                        toHeight:320.0f * _kKRMixImageScaleRatio
+                                         cutMode:_cutMode];
+    }
+    
+    //960 x 960
+    //NSLog(@"_cameraImage 1 size : %f, %f", _cameraImage.size.width, _cameraImage.size.height);
+    
+    //2014.05.02 PM 10:23
+    //NSLog(@"here 3 : %@", [NSDate date]);
+    //[self._krCountDown stop];
+    //[self._krProgress stopFromTranslucentView:self.outCameraView];
+    //[self._krProgress stopFromTranslucentViewAndRemoveTipTitle:self.outCameraView];
+    
+    if( self._krCamera.sourceMode == KRCameraModesForSelectAlbum )
+    {
+        [_imagePicker dismissViewControllerAnimated:YES completion:^{
+            //切換至分享模式
+            if( [self _isCameraMode] )
+            {
+                [self _turnToShareMode];
+            }
+        }];
+    }
+    else
+    {
+        [self _turnToShareMode];
+    }
+}
+
+@end
+
 @implementation KRMixCameraViewController
 
 @synthesize delegate;
@@ -569,7 +656,7 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 @synthesize _templates;
 @synthesize _cameraImage;
 @synthesize _doShareToFacebook;
-
+//@synthesize _krCountDown;
 
 -(id)init
 {
@@ -606,6 +693,8 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
     {
         _krCamera = [[KRCamera alloc] initWithDelegate:self];
     }
+    //self._krCountDown = [KRCountDown sharedInstance];
+    
     [self _initWithVars];
     [self _initializeScrollViewSettings];
     [self _addDefaultTemplates];
@@ -667,9 +756,13 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
             [self._krCamera.view setFrame:CGRectMake(0.0f, 0.0f, 320.0f, 320.0f)];
         }
         [self._krCamera startCamera];
-        self._krCamera.autoDismissPresent      = NO;
+        self._krCamera.autoDismissPresent      = NO; //YES;
         self._krCamera.autoRemoveFromSuperview = NO;
-        [self.outCameraView addSubview:self._krCamera.view];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            //[self presentViewController:self._krCamera animated:YES completion:nil];
+            [self.outCameraView addSubview:self._krCamera.view];
+            //_krCountDown.view = self._krCamera.view;
+        });
     }
 }
 
@@ -695,14 +788,12 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 -(IBAction)takePicture:(id)sender
 {
     //在 4S 上拍照會很容易 Memory Crash
-    [self._krProgress startOnTranslucentView:self.outCameraView tipTitle:@"正在處理照片"];
+    //2014.05.02 PM 10:23
+    //[self._krProgress startOnTranslucentView:self.outCameraView tipTitle:@"正在處理照片"];
+    //[self._krProgress startOnTranslucentView:self.outCameraView];
+    
+    //[self._krCountDown start];
     [self._krCamera takeOnePicture];
-    /*
-    dispatch_async(dispatch_get_main_queue(), ^
-    {
-        [self._krCamera takeOnePicture];
-    });
-     */
 }
 
 /*
@@ -850,9 +941,23 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
     }
 }
 
+/*
+ * @ 將合成後的圖片存入相簿
+ */
+-(IBAction)saveInAlbum:(id)sender
+{
+    [self _mergedImage];
+    [_krCamera saveToAlbum:self.outPhotoImageView.image completion:^(NSURL *assetURL, NSError *error)
+    {
+        [self _showAlertWithMessage:@"已存入相簿"];
+        [self _dismissShareView];
+    }];
+}
+
 #pragma KRCameraDelegate
 /*
  * @ 按下取消時
+ *   - Pressed cancel button.
  */
 -(void)krCameraDidCancel:(UIImagePickerController *)_imagePicker
 {
@@ -873,82 +978,56 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 /*
  * @ 原始選取圖片、影片完成時，或拍完照、錄完影後
  *   - 要在這裡進行檔案的轉換、處理與儲存
+ *   - Picking original image / video then running here.
  */
 -(void)krCameraDidFinishPickingMediaWithInfo:(NSDictionary *)_infos imagePickerController:(UIImagePickerController *)_imagePicker
 {
     //[self._krCamera wantToFullScreen];
+    //NSLog(@"Picture 4 : %@", [NSDate date]);
+    
+    //2014.05.02 PM 22:10
+    //是相機模式就執行這裡
+    if( self._krCamera.sourceMode != KRCameraModesForSelectAlbum )
+    {
+        [self _showResultImage:[_infos objectForKey:@"UIImagePickerControllerOriginalImage"] withImagePickerController:_imagePicker];
+    }
 }
 
 /*
  * @ 對象是圖片並包含 EXIF / TIFF 等 MetaData 資訊
+ *   - The image includes EXIF / TIFF metadata.
  */
+/*
 -(void)krCameraDidFinishPickingImage:(UIImage *)_image imagePath:(NSString *)_imagePath metadata:(NSDictionary *)_metadatas imagePickerController:(UIImagePickerController *)_imagePicker
 {
-    
     //NSLog(@"meta : %@", _metadatas);
     
 }
+*/
 
 /*
- * @ 對象是圖片
+ * @ 對象是原始圖片
+ *   - The target is original image.
  */
 -(void)krCameraDidFinishPickingImage:(UIImage *)_image imagePath:(NSString *)_imagePath imagePickerController:(UIImagePickerController *)_imagePicker
 {
     //2448 x 3264
     //NSLog(@"_image 1 size : %f, %f", _image.size.width, _image.size.height);
     
-    /*
-     * @ 在這裡上傳與分享剪裁選擇好的圖片
-     */
-    /*
-     * @ 原先認為，是 iPhone 5 就中間裁圖
-     *   - 如果是 4 / 4S 就左上角裁圖，這是因為 Device 不同，
-     *     那，原始要裁切的圖片呎吋就不同，這會造成 4S 如果也以中心點裁圖時，就會產生錯位的情況。
-     *
-     * @ 2014.02.23 PM 23:12 修正上述觀念
-     *   - 跟 iPhone 5 沒有關係，跟 iOS 6 與 7 之間的差異有關 : 
-     *     - iOS 6，iPhone 4S 才需要使用「左上角裁圖」的模式
-     *     - iOS 7，iPhone 4S 直接使用「中間點裁圖」的模式
-     *     - iOS 7，iPhone 5  需要使用「左上角裁圖」的模式
-     *
-     */
-    if( [self _isIphone5] )
-    {
-        self._cameraImage = [self _scaleCutImage:_image
-                                         toWidth:320.0f * _kKRMixImageScaleRatio
-                                        toHeight:320.0f * _kKRMixImageScaleRatio
-                                         cutMode:KRMixCameraImageCutModesForLeftTop];
-    }
-    else
-    {
-        self._cameraImage = [self _scaleCutImage:_image
-                                         toWidth:320.0f * _kKRMixImageScaleRatio
-                                        toHeight:320.0f * _kKRMixImageScaleRatio
-                                         cutMode:KRMixCameraImageCutModesForCenter];
-    }
+    //NSLog(@"Picture 8 : %@", [NSDate date]);
     
-    //960 x 960
-    //NSLog(@"_cameraImage 1 size : %f, %f", _cameraImage.size.width, _cameraImage.size.height);
-    
-    [self._krProgress stopFromTranslucentViewAndRemoveTipTitle:self.outCameraView];
+    //2014.05.02 PM 22:10
+    //是相簿選擇圖片才執行這裡
+    //這是因為照相模式要存照片，之後再進到這裡會太久，需要 6 ~ 9 秒，所以就把照相和相簿選圖 2 個功能分開進行
     if( self._krCamera.sourceMode == KRCameraModesForSelectAlbum )
     {
-        [_imagePicker dismissViewControllerAnimated:YES completion:^{
-            //切換至分享模式
-            if( [self _isCameraMode] )
-            {
-                [self _turnToShareMode];
-            }
-        }];
-    }
-    else
-    {
-        [self _turnToShareMode];
+        [self _showResultImage:_image withImagePickerController:_imagePicker];
     }
 }
 
 /*
  * @ 對象是修改後的圖片
+ *   - The target is edited image.
  */
 -(void)krCameraDidFinishEditedImage:(UIImage *)_image imagePath:(NSString *)_imagePath imagePickerController:(UIImagePickerController *)_imagePicker
 {
@@ -982,6 +1061,7 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 
 /*
  * @ 對象是影片
+ *   - The target is Video.
  */
 -(void)krCameraDidFinishPickingVideoPath:(NSString *)_videoPath imagePickerController:(UIImagePickerController *)_imagePicker
 {
@@ -1027,21 +1107,6 @@ static CGFloat _kKRMixImageScaleRatio = 3.0f; //2.0f; //4.0 倍太大，會 Memo
 -(void)krFacebookDidCancel
 {
     [self _showButtonWithFacebookLogin];
-}
-
--(void)krFacebook:(KRFacebook *)_krFacebook didSavedUserPrivations:(NSDictionary *)_savedDatas
-{
-    
-}
-
--(void)krFacebookDidFinishAllRequests
-{
-    
-}
-
--(void)krFacebook:(KRFacebook *)_krFacebook didLoadWithResponsesOfDictionary:(NSDictionary *)_results andKindOf:(NSString *)_perform
-{
-    
 }
 
 #pragma UITextFieldDelegate

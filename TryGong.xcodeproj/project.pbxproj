@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E189B2E1913E5E9001B00ED /* KRCountDown.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E189B2D1913E5E9001B00ED /* KRCountDown.m */; };
+		8E189B371914D92A001B00ED /* btn_black.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E189B331914D92A001B00ED /* btn_black.png */; };
+		8E189B381914D92A001B00ED /* btn_black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E189B341914D92A001B00ED /* btn_black@2x.png */; };
+		8E189B391914D92A001B00ED /* btn_white.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E189B351914D92A001B00ED /* btn_white.png */; };
+		8E189B3A1914D92A001B00ED /* btn_white@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E189B361914D92A001B00ED /* btn_white@2x.png */; };
 		8E37564A18BA2795006909E1 /* ele_fame_6.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E37564818BA2795006909E1 /* ele_fame_6.png */; };
 		8E37564B18BA2795006909E1 /* ele_fame_6@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E37564918BA2795006909E1 /* ele_fame_6@2x.png */; };
 		8E48E7D618BA3BF500CD0051 /* ele_fame_blank.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E48E7D418BA3BF500CD0051 /* ele_fame_blank.png */; };
@@ -48,7 +53,6 @@
 		8E9AAAEE174002DD00E3952D /* FacebookSDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8E9AAAED174002DD00E3952D /* FacebookSDKResources.bundle */; };
 		8E9AAAF0174002EE00E3952D /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9AAAEF174002EE00E3952D /* FacebookSDK.framework */; };
 		8E9AAAF21740031D00E3952D /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9AAAF11740031D00E3952D /* Accounts.framework */; };
-		8E9AAAF41740032200E3952D /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9AAAF31740032200E3952D /* AdSupport.framework */; };
 		8E9AAAF61740032600E3952D /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9AAAF51740032600E3952D /* Social.framework */; };
 		8E9AAAF81740036600E3952D /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9AAAF71740036600E3952D /* AVFoundation.framework */; };
 		8E9AAAFA1740036C00E3952D /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9AAAF91740036C00E3952D /* libsqlite3.0.dylib */; };
@@ -59,6 +63,7 @@
 		8E9AAB04174003A900E3952D /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9AAB03174003A900E3952D /* QuartzCore.framework */; };
 		8E9AAB06174003B300E3952D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E9AAB05174003B300E3952D /* SystemConfiguration.framework */; };
 		8E9AAB0E174004FE00E3952D /* KRDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9AAB0A174004FE00E3952D /* KRDatabase.m */; };
+		8EC475E7192B986A00C282F7 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EC475E6192B986A00C282F7 /* AdSupport.framework */; };
 		8EF9039317045E7400422FBA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9039217045E7400422FBA /* UIKit.framework */; };
 		8EF9039517045E7400422FBA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9039417045E7400422FBA /* Foundation.framework */; };
 		8EF9039717045E7400422FBA /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EF9039617045E7400422FBA /* CoreGraphics.framework */; };
@@ -143,6 +148,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8E189B2C1913E5E9001B00ED /* KRCountDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KRCountDown.h; sourceTree = "<group>"; };
+		8E189B2D1913E5E9001B00ED /* KRCountDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KRCountDown.m; sourceTree = "<group>"; };
+		8E189B331914D92A001B00ED /* btn_black.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_black.png; sourceTree = "<group>"; };
+		8E189B341914D92A001B00ED /* btn_black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_black@2x.png"; sourceTree = "<group>"; };
+		8E189B351914D92A001B00ED /* btn_white.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_white.png; sourceTree = "<group>"; };
+		8E189B361914D92A001B00ED /* btn_white@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_white@2x.png"; sourceTree = "<group>"; };
 		8E37564818BA2795006909E1 /* ele_fame_6.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ele_fame_6.png; sourceTree = "<group>"; };
 		8E37564918BA2795006909E1 /* ele_fame_6@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ele_fame_6@2x.png"; sourceTree = "<group>"; };
 		8E48E7D418BA3BF500CD0051 /* ele_fame_blank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ele_fame_blank.png; sourceTree = "<group>"; };
@@ -200,7 +211,6 @@
 		8E9AAAED174002DD00E3952D /* FacebookSDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FacebookSDKResources.bundle; sourceTree = "<group>"; };
 		8E9AAAEF174002EE00E3952D /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		8E9AAAF11740031D00E3952D /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
-		8E9AAAF31740032200E3952D /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		8E9AAAF51740032600E3952D /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		8E9AAAF71740036600E3952D /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8E9AAAF91740036C00E3952D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
@@ -212,6 +222,7 @@
 		8E9AAB05174003B300E3952D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		8E9AAB09174004FE00E3952D /* KRDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KRDatabase.h; sourceTree = "<group>"; };
 		8E9AAB0A174004FE00E3952D /* KRDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KRDatabase.m; sourceTree = "<group>"; };
+		8EC475E6192B986A00C282F7 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		8EF9038F17045E7400422FBA /* TryGong.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TryGong.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8EF9039217045E7400422FBA /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		8EF9039417045E7400422FBA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -304,6 +315,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EC475E7192B986A00C282F7 /* AdSupport.framework in Frameworks */,
 				8E9AAB06174003B300E3952D /* SystemConfiguration.framework in Frameworks */,
 				8E9AAB04174003A900E3952D /* QuartzCore.framework in Frameworks */,
 				8EF903C017045F6C00422FBA /* ImageIO.framework in Frameworks */,
@@ -314,7 +326,6 @@
 				8E9AAAFA1740036C00E3952D /* libsqlite3.0.dylib in Frameworks */,
 				8E9AAAF81740036600E3952D /* AVFoundation.framework in Frameworks */,
 				8E9AAAF61740032600E3952D /* Social.framework in Frameworks */,
-				8E9AAAF41740032200E3952D /* AdSupport.framework in Frameworks */,
 				8E9AAAF21740031D00E3952D /* Accounts.framework in Frameworks */,
 				8EF903C617045F8100422FBA /* MobileCoreServices.framework in Frameworks */,
 				8EF903C417045F7900422FBA /* MediaPlayer.framework in Frameworks */,
@@ -331,6 +342,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8E189B2B1913E5DD001B00ED /* KRCountDown */ = {
+			isa = PBXGroup;
+			children = (
+				8E189B2C1913E5E9001B00ED /* KRCountDown.h */,
+				8E189B2D1913E5E9001B00ED /* KRCountDown.m */,
+			);
+			path = KRCountDown;
+			sourceTree = "<group>";
+		};
 		8E539C0C173ECC100080429D /* KRCamera */ = {
 			isa = PBXGroup;
 			children = (
@@ -479,8 +499,8 @@
 			isa = PBXGroup;
 			children = (
 				8E9AAAED174002DD00E3952D /* FacebookSDKResources.bundle */,
+				8EC475E6192B986A00C282F7 /* AdSupport.framework */,
 				8E9AAAF11740031D00E3952D /* Accounts.framework */,
-				8E9AAAF31740032200E3952D /* AdSupport.framework */,
 				8E9AAAEF174002EE00E3952D /* FacebookSDK.framework */,
 				8E9AAAF51740032600E3952D /* Social.framework */,
 			);
@@ -582,6 +602,7 @@
 		8EF903B517045ED400422FBA /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				8E189B2B1913E5DD001B00ED /* KRCountDown */,
 				8E9AAB08174004FE00E3952D /* KRDatabase */,
 				8E539C0C173ECC100080429D /* KRCamera */,
 				8E539C11173ECC100080429D /* KRDragView */,
@@ -659,6 +680,8 @@
 		8EF96E18175A3E4B001AE42A /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				8E189B331914D92A001B00ED /* btn_black.png */,
+				8E189B341914D92A001B00ED /* btn_black@2x.png */,
 				8EF96E19175A3E4B001AE42A /* btn_camera.png */,
 				8EF96E1A175A3E4B001AE42A /* btn_camera@2x.png */,
 				8EF96E1B175A3E4B001AE42A /* btn_camera_i5-568h.png */,
@@ -684,6 +707,8 @@
 				8EF96E2F175A3E4B001AE42A /* btn_save_i5.png */,
 				8EF96E30175A3E4B001AE42A /* btn_swtich_camera.png */,
 				8EF96E31175A3E4B001AE42A /* btn_swtich_camera@2x.png */,
+				8E189B351914D92A001B00ED /* btn_white.png */,
+				8E189B361914D92A001B00ED /* btn_white@2x.png */,
 			);
 			path = Buttons;
 			sourceTree = "<group>";
@@ -785,11 +810,13 @@
 				8E57C09518BCF2C200B2B908 /* Icon-Small-50.png in Resources */,
 				8E57C09A18BCF2C200B2B908 /* Icon@2x.png in Resources */,
 				8E539D03173ECC100080429D /* KRMixCameraViewController.xib in Resources */,
+				8E189B371914D92A001B00ED /* btn_black.png in Resources */,
 				8E57C09718BCF2C200B2B908 /* Icon-Small.png in Resources */,
 				8E539D04173ECC100080429D /* KRMixCameraViewController_iPhone5.xib in Resources */,
 				8E57C09218BCF2C200B2B908 /* Icon-72.png in Resources */,
 				8E37564A18BA2795006909E1 /* ele_fame_6.png in Resources */,
 				8E539D06173ECC100080429D /* KRMixTemplateView.xib in Resources */,
+				8E189B381914D92A001B00ED /* btn_black@2x.png in Resources */,
 				8E9AAAEE174002DD00E3952D /* FacebookSDKResources.bundle in Resources */,
 				8E57C09618BCF2C200B2B908 /* Icon-Small-50@2x.png in Resources */,
 				8EF96E56175A3E4B001AE42A /* bg_menu_all.png in Resources */,
@@ -820,10 +847,12 @@
 				8EF96E6C175A3E4B001AE42A /* bar_top_i5.png in Resources */,
 				8EF96E6D175A3E4B001AE42A /* btn_camera.png in Resources */,
 				8EF96E6E175A3E4B001AE42A /* btn_camera@2x.png in Resources */,
+				8E189B391914D92A001B00ED /* btn_white.png in Resources */,
 				8E8A6AB718BA498500761666 /* ele_fame_blank@2x.png in Resources */,
 				8EF96E6F175A3E4B001AE42A /* btn_camera_i5-568h.png in Resources */,
 				8EF96E70175A3E4B001AE42A /* btn_camera_i5.png in Resources */,
 				8EF96E71175A3E4B001AE42A /* btn_camera_i5@2x.png in Resources */,
+				8E189B3A1914D92A001B00ED /* btn_white@2x.png in Resources */,
 				8EF96E72175A3E4B001AE42A /* btn_camera_new.png in Resources */,
 				8EF96E73175A3E4B001AE42A /* btn_camera_new@2x.png in Resources */,
 				8EF96E74175A3E4B001AE42A /* btn_cancel.png in Resources */,
@@ -900,6 +929,7 @@
 				8E539D09173ECC100080429D /* KRWatchKeyboard.m in Sources */,
 				8E539D0A173ECC100080429D /* Reachability.m in Sources */,
 				8E9AAB0E174004FE00E3952D /* KRDatabase.m in Sources */,
+				8E189B2E1913E5E9001B00ED /* KRCountDown.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -976,7 +1006,7 @@
 		8EF903B317045E7400422FBA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -989,6 +1019,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -996,7 +1027,7 @@
 		8EF903B417045E7400422FBA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1009,6 +1040,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1041,7 +1073,7 @@
 		8EF96EAD175B7A70001AE42A /* Destribute */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1055,6 +1087,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				VALID_ARCHS = "armv7 armv7s";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Destribute;

@@ -3,7 +3,7 @@
 //  
 //
 //  Created by Kalvar on 13/2/2.
-//  Copyright (c) 2013年 Kuo-Ming Lin. All rights reserved.
+//  Copyright (c) 2013 - 2014年 Kuo-Ming Lin. All rights reserved.
 //
 
 #import "KRProgress.h"
@@ -281,7 +281,7 @@ static NSInteger _krpActivityBackgroundViewTag = 99997;
     UIView *_backgroundView = [[UIView alloc] initWithFrame:_frame];
     [_backgroundView setTag:_krpActivityBackgroundViewTag];
     [_backgroundView setBackgroundColor:[UIColor blackColor]];
-    [_backgroundView setAlpha:0.5];
+    [_backgroundView setAlpha:1.0]; //2014.05.02 PM 22:13, 原先是 0.5f
     [_targetView addSubview:_backgroundView];
     [self startOnView:_targetView];
 }
